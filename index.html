@@ -320,37 +320,79 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// ===== AIRPORT SEARCH =====
-let searchTimer = null;
-function debounceSearch(input, container, isFrom) {
-    clearTimeout(searchTimer);
-    const q = input.value.trim();
-    if (q.length < 1) { container.classList.remove('active'); return; }
-    searchTimer = setTimeout(async () => {
-        try {
-            const resp = await fetch(`${API_BASE}/flights/searchAirport?query=${encodeURIComponent(q)}&locale=zh-CN`, { headers });
-            const data = await resp.json();
-            if (!data.data?.length) { container.classList.remove('active'); return; }
-            container.innerHTML = data.data.map(item => {
-                const p = item.presentation || {}, nav = item.navigation || {}, fp = nav.relevantFlightParams || {};
-                return `<div class="suggestion-item" data-sky="${fp.skyId||''}" data-entity="${fp.entityId||''}" data-name="${p.title||''}" data-code="${fp.skyId||''}">
-                    <span class="code">${fp.skyId||''}</span> ${p.suggestionTitle||p.title||''}
-                    <div class="city">${p.subtitle||''}</div>
-                </div>`;
-            }).join('');
-            container.classList.add('active');
-            container.querySelectorAll('.suggestion-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const d = { skyId: item.dataset.sky, entityId: item.dataset.entity, name: item.dataset.name };
-                    if (isFrom) { fromInput.value = `${item.dataset.name} (${item.dataset.code})`; fromAirport = d; fromSuggestions.classList.remove('active'); }
-                    else { toInput.value = `${item.dataset.name} (${item.dataset.code})`; toAirport = d; toSuggestions.classList.remove('active'); }
-                });
-            });
-        } catch(e) { console.warn(e); }
-    }, 400);
+// ===== LOCAL AIRPORT DATABASE (no API calls) =====
+const AIRPORT_DB = [
+    { skyId:'PEK', entityId:'128668664', name:'北京首都', city:'北京', code:'PEK' },
+    { skyId:'PKX', entityId:'200635487', name:'北京大兴', city:'北京', code:'PKX' },
+    { skyId:'BJSA', entityId:'27545090', name:'北京(全部)', city:'北京', code:'BJS' },
+    { skyId:'SHA', entityId:'128669004', name:'上海虹桥', city:'上海', code:'SHA' },
+    { skyId:'PVG', entityId:'128667077', name:'上海浦东', city:'上海', code:'PVG' },
+    { skyId:'CSHA', entityId:'27546079', name:'上海(全部)', city:'上海', code:'SHA' },
+    { skyId:'CAN', entityId:'128668197', name:'广州白云', city:'广州', code:'CAN' },
+    { skyId:'SZX', entityId:'128667883', name:'深圳宝安', city:'深圳', code:'SZX' },
+    { skyId:'CTU', entityId:'128668272', name:'成都天府', city:'成都', code:'CTU' },
+    { skyId:'CKG', entityId:'128668232', name:'重庆江北', city:'重庆', code:'CKG' },
+    { skyId:'HGH', entityId:'128668443', name:'杭州萧山', city:'杭州', code:'HGH' },
+    { skyId:'NKG', entityId:'128668664', name:'南京禄口', city:'南京', code:'NKG' },
+    { skyId:'WUH', entityId:'128669054', name:'武汉天河', city:'武汉', code:'WUH' },
+    { skyId:'KMG', entityId:'128668522', name:'昆明长水', city:'昆明', code:'KMG' },
+    { skyId:'XIY', entityId:'128668974', name:'西安咸阳', city:'西安', code:'XIY' },
+    { skyId:'TAO', entityId:'128668742', name:'青岛胶东', city:'青岛', code:'TAO' },
+    { skyId:'DLC', entityId:'128668312', name:'大连周水子', city:'大连', code:'DLC' },
+    { skyId:'SHE', entityId:'128668814', name:'沈阳桃仙', city:'沈阳', code:'SHE' },
+    { skyId:'TSN', entityId:'128668924', name:'天津滨海', city:'天津', code:'TSN' },
+    { skyId:'HAK', entityId:'128668392', name:'海口美兰', city:'海口', code:'HAK' },
+    { skyId:'SYX', entityId:'128668872', name:'三亚凤凰', city:'三亚', code:'SYX' },
+    { skyId:'XMN', entityId:'128669094', name:'厦门高崎', city:'厦门', code:'XMN' },
+    { skyId:'NRT', entityId:'128668702', name:'东京成田', city:'东京', code:'NRT' },
+    { skyId:'HND', entityId:'128668452', name:'东京羽田', city:'东京', code:'HND' },
+    { skyId:'KIX', entityId:'128668502', name:'大阪关西', city:'大阪', code:'KIX' },
+    { skyId:'ICN', entityId:'128668472', name:'首尔仁川', city:'首尔', code:'ICN' },
+    { skyId:'SIN', entityId:'128668832', name:'新加坡樟宜', city:'新加坡', code:'SIN' },
+    { skyId:'BKK', entityId:'128668152', name:'曼谷素万那普', city:'曼谷', code:'BKK' },
+    { skyId:'HKG', entityId:'128668462', name:'香港国际', city:'香港', code:'HKG' },
+    { skyId:'TPE', entityId:'128668912', name:'台北桃园', city:'台北', code:'TPE' },
+    { skyId:'LHR', entityId:'128668552', name:'伦敦希思罗', city:'伦敦', code:'LHR' },
+    { skyId:'CDG', entityId:'128668212', name:'巴黎戴高乐', city:'巴黎', code:'CDG' },
+    { skyId:'JFK', entityId:'128668482', name:'纽约肯尼迪', city:'纽约', code:'JFK' },
+    { skyId:'LAX', entityId:'128668532', name:'洛杉矶国际', city:'洛杉矶', code:'LAX' },
+];
+
+function searchLocalAirports(query) {
+    if (!query) return [];
+    const q = query.toLowerCase();
+    return AIRPORT_DB.filter(a =>
+        a.city.toLowerCase().includes(q) ||
+        a.name.toLowerCase().includes(q) ||
+        a.code.toLowerCase().includes(q) ||
+        a.skyId.toLowerCase().includes(q)
+    ).slice(0, 8);
 }
-fromInput.addEventListener('input', () => { fromAirport = null; debounceSearch(fromInput, fromSuggestions, true); });
-toInput.addEventListener('input', () => { toAirport = null; debounceSearch(toInput, toSuggestions, false); });
+
+// ===== AIRPORT SEARCH (local, instant) =====
+function showSuggestions(input, container, isFrom) {
+    const q = input.value.trim();
+    const results = searchLocalAirports(q);
+    if (results.length === 0) { container.classList.remove('active'); return; }
+    container.innerHTML = results.map(a =>
+        `<div class="suggestion-item" data-sky="${a.skyId}" data-entity="${a.entityId}" data-name="${a.city}" data-code="${a.code}">
+            <span class="code">${a.code}</span> ${a.name}
+            <div class="city">${a.city}</div>
+        </div>`
+    ).join('');
+    container.classList.add('active');
+    container.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const d = { skyId: item.dataset.sky, entityId: item.dataset.entity, name: item.dataset.name };
+            if (isFrom) { fromInput.value = `${item.dataset.name} (${item.dataset.code})`; fromAirport = d; fromSuggestions.classList.remove('active'); }
+            else { toInput.value = `${item.dataset.name} (${item.dataset.code})`; toAirport = d; toSuggestions.classList.remove('active'); }
+        });
+    });
+}
+fromInput.addEventListener('input', () => { fromAirport = null; showSuggestions(fromInput, fromSuggestions, true); });
+toInput.addEventListener('input', () => { toAirport = null; showSuggestions(toInput, toSuggestions, false); });
+fromInput.addEventListener('focus', () => { if (!fromAirport) showSuggestions(fromInput, fromSuggestions, true); });
+toInput.addEventListener('focus', () => { if (!toAirport) showSuggestions(toInput, toSuggestions, false); });
 document.addEventListener('click', (e) => { if (!e.target.closest('.input-group')) { fromSuggestions.classList.remove('active'); toSuggestions.classList.remove('active'); } });
 
 swapBtn.addEventListener('click', () => {
