@@ -16,106 +16,63 @@
             --text-light: #6b7280;
             --border: #e5e7eb;
             --success: #10b981;
-            --danger: #ef4444;
             --shadow: 0 2px 8px rgba(0,0,0,0.08);
             --radius: 12px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #0d47a1 100%);
-            color: white;
-            padding: 24px 16px 32px;
-            text-align: center;
-        }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, #0d47a1 100%); color: white; padding: 24px 16px 32px; text-align: center; }
         .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
         .header p { font-size: 13px; opacity: 0.85; }
 
-        /* Search Panel */
-        .search-panel {
-            max-width: 600px;
-            margin: -20px auto 16px;
-            padding: 0 16px;
-        }
-        .search-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 20px;
-        }
-        .swap-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .input-group {
-            flex: 1;
-            position: relative;
-        }
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: var(--text-light);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+        .search-panel { max-width: 600px; margin: -20px auto 16px; padding: 0 16px; }
+        .search-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+
+        /* Trip Type Toggle */
+        .trip-type { display: flex; gap: 0; margin-bottom: 16px; background: var(--bg); border-radius: 8px; padding: 3px; }
+        .trip-type-btn { flex: 1; padding: 8px; border: none; background: transparent; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-light); transition: all 0.2s; }
+        .trip-type-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Passenger Selector */
+        .passenger-row { margin-bottom: 12px; position: relative; }
+        .passenger-trigger { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; background: white; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .passenger-trigger:hover { border-color: var(--primary); }
+        .passenger-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); z-index: 100; padding: 16px; display: none; margin-top: 4px; }
+        .passenger-dropdown.active { display: block; }
+        .passenger-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .passenger-item:last-child { border-bottom: none; }
+        .passenger-label { font-size: 14px; }
+        .passenger-sub { font-size: 11px; color: var(--text-light); }
+        .passenger-ctrl { display: flex; align-items: center; gap: 12px; }
+        .passenger-ctrl button { width: 32px; height: 32px; border: 1.5px solid var(--border); border-radius: 50%; background: white; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .passenger-ctrl button:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+        .passenger-ctrl button:disabled { opacity: 0.3; cursor: not-allowed; }
+        .passenger-ctrl span { font-size: 16px; font-weight: 600; min-width: 20px; text-align: center; }
+
+        .swap-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .input-group { flex: 1; position: relative; }
+        .input-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 4px; font-weight: 500; }
+        .input-group input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s; }
         .input-group input:focus { border-color: var(--primary); }
-        .swap-btn {
-            width: 36px; height: 36px;
-            border: 1.5px solid var(--border);
-            border-radius: 50%; background: white;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center;
-            color: var(--primary); font-size: 16px;
-            margin-top: 18px; transition: all 0.2s; flex-shrink: 0;
-        }
+        .swap-btn { width: 36px; height: 36px; border: 1.5px solid var(--border); border-radius: 50%; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 16px; margin-top: 18px; transition: all 0.2s; flex-shrink: 0; }
         .swap-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
-        .date-row { margin-bottom: 16px; }
-        .date-row input {
-            width: 100%; padding: 10px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px; font-size: 15px; outline: none;
-        }
-        .search-btn {
-            width: 100%; padding: 12px;
-            background: var(--primary); color: white;
-            border: none; border-radius: 8px;
-            font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: background 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+
+        .date-row { display: flex; gap: 8px; margin-bottom: 16px; }
+        .date-group { flex: 1; }
+        .date-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 4px; font-weight: 500; }
+        .date-group input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 15px; outline: none; }
+        .date-group.return { display: none; }
+        .date-group.return.active { display: block; }
+
+        .search-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .search-btn:hover { background: var(--primary-dark); }
         .search-btn:disabled { background: var(--text-light); cursor: not-allowed; }
 
         /* Airport Suggestions */
-        .suggestions {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background: white; border: 1px solid var(--border);
-            border-radius: 8px; box-shadow: var(--shadow);
-            z-index: 100; max-height: 220px; overflow-y: auto; display: none;
-        }
+        .suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); z-index: 100; max-height: 220px; overflow-y: auto; display: none; }
         .suggestions.active { display: block; }
-        .suggestion-item {
-            padding: 10px 12px; cursor: pointer;
-            font-size: 14px; border-bottom: 1px solid var(--border);
-        }
+        .suggestion-item { padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid var(--border); }
         .suggestion-item:last-child { border-bottom: none; }
         .suggestion-item:hover { background: #f0f4ff; }
         .suggestion-item .code { font-weight: 700; color: var(--primary); margin-right: 6px; }
@@ -123,179 +80,125 @@
 
         /* Results */
         .results { max-width: 600px; margin: 0 auto; padding: 0 16px 32px; }
-        .results-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 12px;
-        }
-        .results-header h2 { font-size: 16px; color: var(--text); }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .results-header h2 { font-size: 16px; }
         .results-count { font-size: 13px; color: var(--text-light); }
 
+        /* Tab: Outbound / Return */
+        .result-tabs { display: flex; gap: 0; margin-bottom: 12px; background: white; border-radius: 8px; padding: 3px; box-shadow: var(--shadow); }
+        .result-tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-light); transition: all 0.2s; }
+        .result-tab.active { background: var(--primary); color: white; }
+
         /* Flight Card */
-        .flight-card {
-            background: var(--card); border-radius: var(--radius);
-            box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden;
-            transition: transform 0.2s;
-        }
+        .flight-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden; transition: transform 0.2s; }
         .flight-card:active { transform: scale(0.99); }
         .flight-main { padding: 16px; }
-        .flight-airline {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
-        }
-        .airline-logo {
-            width: 36px; height: 36px; border-radius: 8px;
-            background: #f0f4ff; display: flex; align-items: center;
-            justify-content: center; overflow: hidden;
-        }
+        .flight-airline { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .airline-logo { width: 36px; height: 36px; border-radius: 8px; background: #f0f4ff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .airline-logo img { width: 28px; height: 28px; object-fit: contain; }
-        .airline-logo-text {
-            font-size: 13px; font-weight: 700; color: var(--primary);
-        }
+        .airline-logo-text { font-size: 13px; font-weight: 700; color: var(--primary); }
         .airline-info .airline-name { font-size: 14px; font-weight: 600; }
         .airline-info .flight-number { font-size: 12px; color: var(--text-light); }
-        .flight-route {
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
-        }
+
+        .flight-route { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
         .route-point { text-align: center; min-width: 70px; }
         .route-time { font-size: 22px; font-weight: 700; }
         .route-code { font-size: 13px; color: var(--text-light); font-weight: 500; }
         .route-airport { font-size: 11px; color: var(--text-light); }
-        .route-line {
-            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-        }
+        .route-line { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .route-duration { font-size: 12px; color: var(--text-light); }
-        .route-bar {
-            width: 100%; height: 2px; background: var(--border); position: relative;
-        }
-        .route-bar::after {
-            content: '✈'; position: absolute; right: -4px; top: -9px;
-            font-size: 14px; color: var(--primary);
-        }
+        .route-bar { width: 100%; height: 2px; background: var(--border); position: relative; }
+        .route-bar::after { content: '✈'; position: absolute; right: -4px; top: -9px; font-size: 14px; color: var(--primary); }
         .route-stops { font-size: 11px; color: var(--success); }
         .route-stops.has-stops { color: var(--accent); }
 
         /* Price Bar */
-        .price-bar {
-            border-top: 1px solid var(--border);
-            padding: 12px 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            background: #fafbfc;
-        }
-        .price-source {
-            font-size: 11px; color: var(--text-light);
-            display: flex; align-items: center; gap: 4px;
-        }
+        .price-bar { border-top: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: #fafbfc; }
+        .price-info { display: flex; flex-direction: column; }
+        .price-per { font-size: 11px; color: var(--text-light); }
+        .price-source { font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
         .price-source i { font-size: 10px; color: var(--success); }
         .price-main { display: flex; align-items: center; gap: 12px; }
-        .price-value {
-            font-size: 20px; font-weight: 700; color: var(--accent);
-        }
-        .book-btn {
-            padding: 6px 16px; background: var(--primary);
-            color: white; border: none; border-radius: 6px;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-            text-decoration: none; display: inline-block;
-            transition: background 0.2s;
-        }
+        .price-value { font-size: 20px; font-weight: 700; color: var(--accent); }
+        .price-total { font-size: 12px; color: var(--text-light); }
+        .book-btn { padding: 6px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
         .book-btn:hover { background: var(--primary-dark); }
 
-        /* Multi-platform expand */
-        .platforms-expand {
-            border-top: 1px solid var(--border); background: #f8f9fa;
-            display: none;
-        }
+        /* Platforms */
+        .platforms-expand { border-top: 1px solid var(--border); background: #f8f9fa; display: none; }
         .platforms-expand.active { display: block; }
-        .platforms-toggle {
-            width: 100%; padding: 8px 16px;
-            background: none; border: none; cursor: pointer;
-            font-size: 12px; color: var(--text-light);
-            display: flex; align-items: center; justify-content: center; gap: 4px;
-        }
+        .platforms-toggle { width: 100%; padding: 8px 16px; background: none; border: none; cursor: pointer; font-size: 12px; color: var(--text-light); display: flex; align-items: center; justify-content: center; gap: 4px; }
         .platforms-toggle:hover { color: var(--primary); }
-        .platform-links {
-            padding: 8px 16px 12px;
-            display: flex; flex-wrap: wrap; gap: 8px;
-        }
-        .platform-link {
-            padding: 6px 12px; background: white;
-            border: 1px solid var(--border); border-radius: 6px;
-            font-size: 12px; color: var(--text);
-            text-decoration: none; cursor: pointer;
-            transition: all 0.2s;
-        }
+        .platform-links { padding: 8px 16px 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .platform-link { padding: 6px 12px; background: white; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--text); text-decoration: none; cursor: pointer; transition: all 0.2s; }
         .platform-link:hover { border-color: var(--primary); color: var(--primary); }
-        .platform-link .price { font-weight: 700; color: var(--accent); }
 
-        /* Loading */
         .loading { text-align: center; padding: 40px 16px; }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 12px;
-        }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading p { color: var(--text-light); font-size: 14px; }
-
-        /* Empty / Error */
-        .empty-state {
-            text-align: center; padding: 48px 16px; color: var(--text-light);
-        }
+        .empty-state { text-align: center; padding: 48px 16px; color: var(--text-light); }
         .empty-state i { font-size: 48px; margin-bottom: 12px; color: var(--border); display: block; }
         .empty-state p { font-size: 14px; }
 
-        /* Toast */
-        .toast {
-            position: fixed; bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #333; color: white;
-            padding: 12px 24px; border-radius: 8px;
-            font-size: 14px; z-index: 1000;
-            transition: transform 0.3s;
-        }
+        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; transition: transform 0.3s; }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* Data source */
         .data-source { max-width: 600px; margin: 0 auto 12px; padding: 0 16px; }
-        .source-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 11px; color: var(--text-light);
-            background: white; padding: 4px 10px;
-            border-radius: 20px; border: 1px solid var(--border);
-        }
+        .source-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-light); background: white; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); }
         .source-badge i { color: var(--success); font-size: 10px; }
 
-        /* Sort bar */
-        .sort-bar {
-            max-width: 600px; margin: 0 auto 12px; padding: 0 16px;
-            display: flex; gap: 8px;
-        }
-        .sort-btn {
-            padding: 6px 12px; background: white;
-            border: 1px solid var(--border); border-radius: 20px;
-            font-size: 12px; color: var(--text-light); cursor: pointer;
-            transition: all 0.2s;
-        }
-        .sort-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .header h1 { font-size: 20px; }
-            .route-time { font-size: 18px; }
-            .price-value { font-size: 17px; }
-        }
+        @media (max-width: 480px) { .header h1 { font-size: 20px; } .route-time { font-size: 18px; } .price-value { font-size: 17px; } }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1><i class="fas fa-plane"></i> 机票比价</h1>
-    <p>实时票价查询 · 多平台跳转比价</p>
+    <p>实时票价 · 往返查询 · 多人出行</p>
 </div>
 
 <div class="search-panel">
     <div class="search-card">
+        <!-- Trip Type -->
+        <div class="trip-type">
+            <button class="trip-type-btn active" data-type="oneway" onclick="setTripType('oneway')">单程</button>
+            <button class="trip-type-btn" data-type="roundtrip" onclick="setTripType('roundtrip')">往返</button>
+        </div>
+
+        <!-- Passengers -->
+        <div class="passenger-row">
+            <button class="passenger-trigger" id="passengerTrigger" onclick="togglePassenger()">
+                <span id="passengerText">1位成人</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="passenger-dropdown" id="passengerDropdown">
+                <div class="passenger-item">
+                    <div>
+                        <div class="passenger-label">成人</div>
+                        <div class="passenger-sub">12岁及以上</div>
+                    </div>
+                    <div class="passenger-ctrl">
+                        <button onclick="changePax('adults',-1)" id="adultMinus" disabled>−</button>
+                        <span id="adultCount">1</span>
+                        <button onclick="changePax('adults',1)">+</button>
+                    </div>
+                </div>
+                <div class="passenger-item">
+                    <div>
+                        <div class="passenger-label">儿童</div>
+                        <div class="passenger-sub">2-11岁</div>
+                    </div>
+                    <div class="passenger-ctrl">
+                        <button onclick="changePax('children',-1)" id="childMinus" disabled>−</button>
+                        <span id="childCount">0</span>
+                        <button onclick="changePax('children',1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- City Inputs -->
         <div class="swap-row">
             <div class="input-group">
                 <label>出发地</label>
@@ -309,10 +212,19 @@
                 <div class="suggestions" id="toSuggestions"></div>
             </div>
         </div>
+
+        <!-- Dates -->
         <div class="date-row">
-            <label style="display:block;font-size:12px;color:var(--text-light);margin-bottom:4px;font-weight:500;">出发日期</label>
-            <input type="date" id="dateInput">
+            <div class="date-group">
+                <label>出发日期</label>
+                <input type="date" id="departDate">
+            </div>
+            <div class="date-group return" id="returnGroup">
+                <label>返程日期</label>
+                <input type="date" id="returnDate">
+            </div>
         </div>
+
         <button class="search-btn" id="searchBtn">
             <i class="fas fa-search"></i> 搜索航班
         </button>
@@ -321,7 +233,7 @@
 
 <div id="dataInfo" class="data-source" style="display:none;">
     <span class="source-badge">
-        <i class="fas fa-circle"></i> 实时票价: Sky Scanner · 点击"去比价"跳转携程/去哪儿等平台
+        <i class="fas fa-circle"></i> 实时票价: Sky Scanner · 点击"去比价"跳转各平台
     </span>
 </div>
 
@@ -339,16 +251,22 @@
 const RAPID_KEY = '4f791cc878msh50050dba118db59p1e44e6jsn0af00e876510';
 const API_HOST = 'sky-scrapper.p.rapidapi.com';
 const API_BASE = `https://${API_HOST}/api/v1`;
+const headers = { 'X-RapidAPI-Key': RAPID_KEY, 'X-RapidAPI-Host': API_HOST };
 
-const headers = {
-    'X-RapidAPI-Key': RAPID_KEY,
-    'X-RapidAPI-Host': API_HOST,
-};
+// ===== STATE =====
+let tripType = 'oneway';
+let passengers = { adults: 1, children: 0 };
+let fromAirport = null;
+let toAirport = null;
+let cachedOutbound = [];
+let cachedReturn = [];
 
 // ===== DOM =====
 const fromInput = document.getElementById('fromInput');
 const toInput = document.getElementById('toInput');
-const dateInput = document.getElementById('dateInput');
+const departDate = document.getElementById('departDate');
+const returnDate = document.getElementById('returnDate');
+const returnGroup = document.getElementById('returnGroup');
 const searchBtn = document.getElementById('searchBtn');
 const swapBtn = document.getElementById('swapBtn');
 const resultsDiv = document.getElementById('results');
@@ -358,15 +276,51 @@ const toast = document.getElementById('toast');
 const dataInfo = document.getElementById('dataInfo');
 
 // Default date: tomorrow
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
-dateInput.value = tomorrow.toISOString().split('T')[0];
+const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+departDate.value = tomorrow.toISOString().split('T')[0];
+const retDefault = new Date(); retDefault.setDate(retDefault.getDate() + 3);
+returnDate.value = retDefault.toISOString().split('T')[0];
 
-// Store selected airport data
-let fromAirport = null;
-let toAirport = null;
+// ===== TRIP TYPE =====
+function setTripType(type) {
+    tripType = type;
+    document.querySelectorAll('.trip-type-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.type === type);
+    });
+    returnGroup.classList.toggle('active', type === 'roundtrip');
+    resultsDiv.innerHTML = `<div class="empty-state"><i class="fas fa-plane-departure"></i><p>输入出发地和目的地，搜索航班</p></div>`;
+    dataInfo.style.display = 'none';
+}
 
-// ===== AIRPORT SEARCH (debounced) =====
+// ===== PASSENGERS =====
+function togglePassenger() {
+    document.getElementById('passengerDropdown').classList.toggle('active');
+}
+function changePax(type, delta) {
+    if (type === 'adults') {
+        passengers.adults = Math.max(1, Math.min(9, passengers.adults + delta));
+        document.getElementById('adultCount').textContent = passengers.adults;
+        document.getElementById('adultMinus').disabled = passengers.adults <= 1;
+    } else {
+        passengers.children = Math.max(0, Math.min(8, passengers.children + delta));
+        document.getElementById('childCount').textContent = passengers.children;
+        document.getElementById('childMinus').disabled = passengers.children <= 0;
+    }
+    updatePaxText();
+}
+function updatePaxText() {
+    let parts = [];
+    if (passengers.adults > 0) parts.push(`${passengers.adults}位成人`);
+    if (passengers.children > 0) parts.push(`${passengers.children}位儿童`);
+    document.getElementById('passengerText').textContent = parts.join(' + ');
+}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.passenger-row')) {
+        document.getElementById('passengerDropdown').classList.remove('active');
+    }
+});
+
+// ===== AIRPORT SEARCH =====
 let searchTimer = null;
 function debounceSearch(input, container, isFrom) {
     clearTimeout(searchTimer);
@@ -376,82 +330,38 @@ function debounceSearch(input, container, isFrom) {
         try {
             const resp = await fetch(`${API_BASE}/flights/searchAirport?query=${encodeURIComponent(q)}&locale=zh-CN`, { headers });
             const data = await resp.json();
-            if (!data.data || data.data.length === 0) {
-                container.classList.remove('active');
-                return;
-            }
+            if (!data.data?.length) { container.classList.remove('active'); return; }
             container.innerHTML = data.data.map(item => {
-                const p = item.presentation || {};
-                const nav = item.navigation || {};
-                const fp = nav.relevantFlightParams || {};
-                const skyId = fp.skyId || '';
-                const entityId = fp.entityId || '';
-                const subtitle = p.subtitle || '';
-                return `<div class="suggestion-item" data-sky="${skyId}" data-entity="${entityId}" data-name="${p.title || ''}" data-code="${skyId}">
-                    <span class="code">${skyId}</span> ${p.suggestionTitle || p.title || ''}
-                    <div class="city">${subtitle}</div>
+                const p = item.presentation || {}, nav = item.navigation || {}, fp = nav.relevantFlightParams || {};
+                return `<div class="suggestion-item" data-sky="${fp.skyId||''}" data-entity="${fp.entityId||''}" data-name="${p.title||''}" data-code="${fp.skyId||''}">
+                    <span class="code">${fp.skyId||''}</span> ${p.suggestionTitle||p.title||''}
+                    <div class="city">${p.subtitle||''}</div>
                 </div>`;
             }).join('');
             container.classList.add('active');
-
             container.querySelectorAll('.suggestion-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    const airportData = {
-                        skyId: item.dataset.sky,
-                        entityId: item.dataset.entity,
-                        name: item.dataset.name,
-                    };
-                    if (isFrom) {
-                        fromInput.value = `${item.dataset.name} (${item.dataset.code})`;
-                        fromAirport = airportData;
-                        fromSuggestions.classList.remove('active');
-                    } else {
-                        toInput.value = `${item.dataset.name} (${item.dataset.code})`;
-                        toAirport = airportData;
-                        toSuggestions.classList.remove('active');
-                    }
+                    const d = { skyId: item.dataset.sky, entityId: item.dataset.entity, name: item.dataset.name };
+                    if (isFrom) { fromInput.value = `${item.dataset.name} (${item.dataset.code})`; fromAirport = d; fromSuggestions.classList.remove('active'); }
+                    else { toInput.value = `${item.dataset.name} (${item.dataset.code})`; toAirport = d; toSuggestions.classList.remove('active'); }
                 });
             });
-        } catch (e) {
-            console.warn('Airport search error:', e);
-        }
+        } catch(e) { console.warn(e); }
     }, 400);
 }
+fromInput.addEventListener('input', () => { fromAirport = null; debounceSearch(fromInput, fromSuggestions, true); });
+toInput.addEventListener('input', () => { toAirport = null; debounceSearch(toInput, toSuggestions, false); });
+document.addEventListener('click', (e) => { if (!e.target.closest('.input-group')) { fromSuggestions.classList.remove('active'); toSuggestions.classList.remove('active'); } });
 
-fromInput.addEventListener('input', () => {
-    fromAirport = null;
-    debounceSearch(fromInput, fromSuggestions, true);
-});
-toInput.addEventListener('input', () => {
-    toAirport = null;
-    debounceSearch(toInput, toSuggestions, false);
-});
-fromInput.addEventListener('focus', () => {
-    if (!fromAirport && fromInput.value.length > 0) debounceSearch(fromInput, fromSuggestions, true);
-});
-toInput.addEventListener('focus', () => {
-    if (!toAirport && toInput.value.length > 0) debounceSearch(toInput, toSuggestions, false);
-});
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.input-group')) {
-        fromSuggestions.classList.remove('active');
-        toSuggestions.classList.remove('active');
-    }
-});
-
-// Swap
 swapBtn.addEventListener('click', () => {
-    const tmpVal = fromInput.value;
-    fromInput.value = toInput.value;
-    toInput.value = tmpVal;
-    const tmpData = fromAirport;
-    fromAirport = toAirport;
-    toAirport = tmpData;
+    const tv = fromInput.value; fromInput.value = toInput.value; toInput.value = tv;
+    const td = fromAirport; fromAirport = toAirport; toAirport = td;
 });
 
-// ===== API: SEARCH FLIGHTS =====
-async function searchFlights(from, to, date) {
-    const url = `${API_BASE}/flights/searchFlights?originSkyId=${from.skyId}&destinationSkyId=${to.skyId}&originEntityId=${from.entityId}&destinationEntityId=${to.entityId}&date=${date}&adults=1&currency=CNY&market=zh-CN&countryCode=CN&sortBy=best&limit=20`;
+// ===== API =====
+async function searchFlights(from, to, date, retDate) {
+    let url = `${API_BASE}/flights/searchFlights?originSkyId=${from.skyId}&destinationSkyId=${to.skyId}&originEntityId=${from.entityId}&destinationEntityId=${to.entityId}&date=${date}&adults=1&currency=CNY&market=zh-CN&countryCode=CN&sortBy=best&limit=20`;
+    if (retDate) url += `&returnDate=${retDate}`;
     const resp = await fetch(url, { headers });
     const data = await resp.json();
     if (!data.status) throw new Error('API 返回异常');
@@ -459,183 +369,165 @@ async function searchFlights(from, to, date) {
 }
 
 // ===== RENDER =====
-function formatTime(isoStr) {
-    if (!isoStr) return '--:--';
-    const d = new Date(isoStr);
-    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+function formatTime(s) { if (!s) return '--:--'; const d = new Date(s); return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+function formatDur(min) { const h = Math.floor(min/60), m = min%60; return h > 0 ? `${h}h ${m}m` : `${m}m`; }
+
+function getTotalPax() { return passengers.adults + passengers.children; }
+function calcTotal(priceRaw) { return priceRaw * getTotalPax(); }
+
+function buildFlightCard(it, idx, direction) {
+    const leg = it.legs?.[0];
+    if (!leg) return '';
+    const carrier = leg.carriers?.marketing?.[0] || {};
+    const airlineName = carrier.name || '未知航司';
+    const airlineCode = carrier.alternateId || '??';
+    const logoUrl = carrier.logoUrl || '';
+    const depTime = formatTime(leg.departure);
+    const arrTime = formatTime(leg.arrival);
+    const originCode = leg.origin?.displayCode || leg.origin?.id || '';
+    const destCode = leg.destination?.displayCode || leg.destination?.id || '';
+    const originName = leg.origin?.name || '';
+    const destName = leg.destination?.name || '';
+    const duration = formatDur(leg.durationInMinutes);
+    const stops = leg.stopCount || 0;
+    const priceRaw = it.price?.raw || 0;
+    const pricePer = it.price?.formatted || 'N/A';
+    const totalPrice = `¥${calcTotal(priceRaw).toLocaleString()}`;
+    const depDate = leg.departure?.split('T')[0] || '';
+
+    return `
+    <div class="flight-card">
+        <div class="flight-main">
+            <div class="flight-airline">
+                <div class="airline-logo">${logoUrl ? `<img src="${logoUrl}" alt="${airlineCode}" onerror="this.parentElement.innerHTML='<span class=airline-logo-text>${airlineCode}</span>'">` : `<span class="airline-logo-text">${airlineCode}</span>`}</div>
+                <div class="airline-info">
+                    <div class="airline-name">${airlineName}</div>
+                    <div class="flight-number">${airlineCode}</div>
+                </div>
+            </div>
+            <div class="flight-route">
+                <div class="route-point"><div class="route-time">${depTime}</div><div class="route-code">${originCode}</div><div class="route-airport">${originName}</div></div>
+                <div class="route-line"><div class="route-duration">${duration}</div><div class="route-bar"></div><div class="route-stops ${stops>0?'has-stops':''}">${stops===0?'直飞':stops+'次中转'}</div></div>
+                <div class="route-point"><div class="route-time">${arrTime}</div><div class="route-code">${destCode}</div><div class="route-airport">${destName}</div></div>
+            </div>
+        </div>
+        <div class="price-bar">
+            <div class="price-info">
+                <div class="price-source"><i class="fas fa-circle"></i> 每人 ${pricePer}</div>
+                ${getTotalPax() > 1 ? `<div class="price-total">${getTotalPax()}人合计</div>` : ''}
+            </div>
+            <div class="price-main">
+                <span class="price-value">${getTotalPax() > 1 ? totalPrice : pricePer}</span>
+                <a class="book-btn" href="https://www.skyscanner.com.cn/transport/flights/${originCode}/${destCode}/${depDate.replace(/-/g,'').slice(2)}/?adultsv2=${passengers.adults}&cabinclass=economy" target="_blank" rel="noopener">去比价 →</a>
+            </div>
+        </div>
+        <div class="platforms-expand" id="pf-${direction}-${idx}">
+            <div class="platform-links">
+                <a class="platform-link" href="https://flights.ctrip.com/online/list/oneway-${originCode}-${destCode}?depdate=${depDate}&cabin=Y&adult=${passengers.adults}&child=${passengers.children}" target="_blank">携程比价</a>
+                <a class="platform-link" href="https://www.qunar.com/search?searchType=oneWay&from=${originCode}&to=${destCode}&departDate=${depDate}" target="_blank">去哪儿</a>
+                <a class="platform-link" href="https://www.fliggy.com/flight/domestic-search?tripType=1&departCity=${originCode}&arriveCity=${destCode}&departDate=${depDate}" target="_blank">飞猪</a>
+                <a class="platform-link" href="https://www.tongcheng.com/flight/search?from=${originCode}&to=${destCode}&date=${depDate}" target="_blank">同程</a>
+            </div>
+        </div>
+        <button class="platforms-toggle" onclick="togglePf('${direction}',${idx})"><i class="fas fa-chevron-down"></i> 去各平台比价</button>
+    </div>`;
 }
 
-function formatDuration(min) {
-    const h = Math.floor(min / 60);
-    const m = min % 60;
-    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+function togglePf(dir, idx) {
+    const el = document.getElementById(`pf-${dir}-${idx}`);
+    el.classList.toggle('active');
+    const btn = el.nextElementSibling;
+    const icon = btn.querySelector('i');
+    if (el.classList.contains('active')) { icon.className = 'fas fa-chevron-up'; btn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起'; }
+    else { icon.className = 'fas fa-chevron-down'; btn.innerHTML = '<i class="fas fa-chevron-down"></i> 去各平台比价'; }
 }
 
-function renderFlights(itineraries) {
-    if (!itineraries || itineraries.length === 0) {
-        resultsDiv.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-search"></i>
-                <p>未找到航班，请尝试其他日期或航线</p>
-            </div>`;
-        return;
-    }
-
+function renderResults() {
     dataInfo.style.display = 'block';
+    let html = '';
 
-    let html = `
-        <div class="results-header">
-            <h2>搜索结果</h2>
-            <span class="results-count">${itineraries.length} 个航班</span>
+    if (tripType === 'roundtrip' && cachedReturn.length > 0) {
+        // Tab switcher for roundtrip
+        html += `<div class="result-tabs">
+            <button class="result-tab active" onclick="showTab('outbound')">去程 (${cachedOutbound.length})</button>
+            <button class="result-tab" onclick="showTab('return')">返程 (${cachedReturn.length})</button>
         </div>`;
 
-    itineraries.forEach((it, idx) => {
-        const leg = it.legs?.[0];
-        if (!leg) return;
+        html += `<div id="tab-outbound">`;
+        cachedOutbound.forEach((it, i) => { html += buildFlightCard(it, i, 'out'); });
+        html += `</div>`;
 
-        const carrier = leg.carriers?.marketing?.[0] || {};
-        const airlineName = carrier.name || '未知航司';
-        const airlineCode = carrier.alternateId || '??';
-        const logoUrl = carrier.logoUrl || '';
-        const flightNo = `${airlineCode}****`; // API doesn't always return flight number
-
-        const depTime = formatTime(leg.departure);
-        const arrTime = formatTime(leg.arrival);
-        const originCode = leg.origin?.displayCode || leg.origin?.id || '';
-        const destCode = leg.destination?.displayCode || leg.destination?.id || '';
-        const originName = leg.origin?.name || '';
-        const destName = leg.destination?.name || '';
-        const duration = formatDuration(leg.durationInMinutes);
-        const stops = leg.stopCount || 0;
-
-        const price = it.price?.formatted || 'N/A';
-        const priceRaw = it.price?.raw || 0;
-
-        // Build booking links with flight params
-        const depDate = leg.departure?.split('T')[0] || '';
-        const bookingQuery = `from=${originCode}&to=${destCode}&date=${depDate}&airline=${airlineCode}`;
-
-        html += `
-        <div class="flight-card">
-            <div class="flight-main">
-                <div class="flight-airline">
-                    <div class="airline-logo">
-                        ${logoUrl ? `<img src="${logoUrl}" alt="${airlineCode}" onerror="this.parentElement.innerHTML='<span class=airline-logo-text>${airlineCode}</span>'">` : `<span class="airline-logo-text">${airlineCode}</span>`}
-                    </div>
-                    <div class="airline-info">
-                        <div class="airline-name">${airlineName}</div>
-                        <div class="flight-number">${airlineCode}</div>
-                    </div>
-                </div>
-                <div class="flight-route">
-                    <div class="route-point">
-                        <div class="route-time">${depTime}</div>
-                        <div class="route-code">${originCode}</div>
-                        <div class="route-airport">${originName}</div>
-                    </div>
-                    <div class="route-line">
-                        <div class="route-duration">${duration}</div>
-                        <div class="route-bar"></div>
-                        <div class="route-stops ${stops > 0 ? 'has-stops' : ''}">${stops === 0 ? '直飞' : stops + '次中转'}</div>
-                    </div>
-                    <div class="route-point">
-                        <div class="route-time">${arrTime}</div>
-                        <div class="route-code">${destCode}</div>
-                        <div class="route-airport">${destName}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="price-bar">
-                <div class="price-source">
-                    <i class="fas fa-circle"></i> Sky Scanner 实时价
-                </div>
-                <div class="price-main">
-                    <span class="price-value">${price}</span>
-                    <a class="book-btn" href="https://www.skyscanner.com.cn/transport/flights/${originCode}/${destCode}/${depDate.replace(/-/g,'').slice(2)}/?adultsv2=1&cabinclass=economy&ref=home" target="_blank" rel="noopener">去比价 →</a>
-                </div>
-            </div>
-            <div class="platforms-expand" id="platforms-${idx}">
-                <div class="platform-links">
-                    <a class="platform-link" href="https://flights.ctrip.com/online/list/oneway-${originCode}-${destCode}?depdate=${depDate}&cabin=Y&adult=1&child=0&infant=0" target="_blank">
-                        携程 <span class="price">${price}</span> 起
-                    </a>
-                    <a class="platform-link" href="https://www.qunar.com/search?searchType=oneWay&from=${originCode}&to=${destCode}&departDate=${depDate}" target="_blank">
-                        去哪儿 <span class="price">${price}</span> 起
-                    </a>
-                    <a class="platform-link" href="https://www.fliggy.com/flight/domestic-search?tripType=1&departCity=${originCode}&arriveCity=${destCode}&departDate=${depDate}" target="_blank">
-                        飞猪 <span class="price">${price}</span> 起
-                    </a>
-                    <a class="platform-link" href="https://www.tongcheng.com/flight/search?from=${originCode}&to=${destCode}&date=${depDate}" target="_blank">
-                        同程 <span class="price">${price}</span> 起
-                    </a>
-                </div>
-            </div>
-            <button class="platforms-toggle" onclick="togglePlatforms(${idx})">
-                <i class="fas fa-chevron-down"></i> 去各平台比价（携程/去哪儿/飞猪/同程）
-            </button>
-        </div>`;
-    });
+        html += `<div id="tab-return" style="display:none">`;
+        cachedReturn.forEach((it, i) => { html += buildFlightCard(it, i, 'ret'); });
+        html += `</div>`;
+    } else {
+        html += `<div class="results-header"><h2>搜索结果</h2><span class="results-count">${cachedOutbound.length} 个航班</span></div>`;
+        cachedOutbound.forEach((it, i) => { html += buildFlightCard(it, i, 'out'); });
+    }
 
     resultsDiv.innerHTML = html;
 }
 
-function togglePlatforms(idx) {
-    const el = document.getElementById(`platforms-${idx}`);
-    el.classList.toggle('active');
-    const btn = el.nextElementSibling;
-    const icon = btn.querySelector('i');
-    if (el.classList.contains('active')) {
-        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-        btn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起';
+function showTab(tab) {
+    document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+    if (tab === 'outbound') {
+        document.querySelectorAll('.result-tab')[0].classList.add('active');
+        document.getElementById('tab-outbound').style.display = 'block';
+        document.getElementById('tab-return').style.display = 'none';
     } else {
-        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-        btn.innerHTML = '<i class="fas fa-chevron-down"></i> 去各平台比价（携程/去哪儿/飞猪/同程）';
+        document.querySelectorAll('.result-tab')[1].classList.add('active');
+        document.getElementById('tab-outbound').style.display = 'none';
+        document.getElementById('tab-return').style.display = 'block';
     }
 }
 
 // ===== TOAST =====
-function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
-}
+function showToast(msg) { toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); }
 
-// ===== SEARCH HANDLER =====
+// ===== SEARCH =====
 searchBtn.addEventListener('click', async () => {
-    if (!fromAirport) {
-        showToast('请先选择出发城市');
-        return;
-    }
-    if (!toAirport) {
-        showToast('请先选择到达城市');
-        return;
-    }
-    const date = dateInput.value;
-    if (!date) {
-        showToast('请选择出发日期');
-        return;
-    }
+    if (!fromAirport) { showToast('请先选择出发城市'); return; }
+    if (!toAirport) { showToast('请先选择到达城市'); return; }
+    if (!departDate.value) { showToast('请选择出发日期'); return; }
+    if (tripType === 'roundtrip' && !returnDate.value) { showToast('请选择返程日期'); return; }
 
     searchBtn.disabled = true;
     searchBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0;"></div> 搜索中...';
-
-    resultsDiv.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>正在搜索 ${fromAirport.name} → ${toAirport.name} 的实时票价...</p>
-        </div>`;
+    resultsDiv.innerHTML = `<div class="loading"><div class="spinner"></div><p>正在搜索 ${fromAirport.name} → ${toAirport.name}...</p></div>`;
 
     try {
-        const itineraries = await searchFlights(fromAirport, toAirport, date);
-        renderFlights(itineraries);
-    } catch (e) {
-        resultsDiv.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>搜索出错: ${e.message}</p>
-            </div>`;
-    }
+        cachedOutbound = [];
+        cachedReturn = [];
 
+        if (tripType === 'roundtrip') {
+            // Search roundtrip as one call
+            const all = await searchFlights(fromAirport, toAirport, departDate.value, returnDate.value);
+            // Split into outbound and return by checking origin
+            all.forEach(it => {
+                const leg0 = it.legs?.[0];
+                const leg1 = it.legs?.[1];
+                if (leg0) cachedOutbound.push({ ...it, legs: [leg0] });
+                if (leg1) cachedReturn.push({ ...it, legs: [leg1] });
+            });
+            // If API returned combined, also search return separately
+            if (cachedReturn.length === 0) {
+                try {
+                    const retFlights = await searchFlights(toAirport, fromAirport, returnDate.value);
+                    cachedReturn = retFlights;
+                } catch(e) { console.warn('Return search failed:', e); }
+            }
+        } else {
+            cachedOutbound = await searchFlights(fromAirport, toAirport, departDate.value);
+        }
+
+        if (cachedOutbound.length === 0 && cachedReturn.length === 0) {
+            resultsDiv.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>未找到航班，请尝试其他日期或航线</p></div>`;
+            return;
+        }
+        renderResults();
+    } catch (e) {
+        resultsDiv.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>搜索出错: ${e.message}</p></div>`;
+    }
     searchBtn.disabled = false;
     searchBtn.innerHTML = '<i class="fas fa-search"></i> 搜索航班';
 });
