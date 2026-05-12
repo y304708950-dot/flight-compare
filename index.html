@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机票比价 - FlightCompare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --accent: #ff6d00;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #0d47a1 100%);
+            color: white;
+            padding: 24px 16px 32px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .header p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* Search Panel */
+        .search-panel {
+            max-width: 600px;
+            margin: -20px auto 16px;
+            padding: 0 16px;
+        }
+        .search-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+        .swap-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+        .swap-btn {
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid var(--border);
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 16px;
+            margin-top: 18px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .swap-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .date-row {
+            margin-bottom: 16px;
+        }
+        .date-row input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+        .search-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .search-btn:hover { background: var(--primary-dark); }
+        .search-btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* Airport Suggestions */
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .suggestions.active { display: block; }
+        .suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover { background: #f0f4ff; }
+        .suggestion-item .code {
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 6px;
+        }
+        .suggestion-item .city {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        /* Results */
+        .results {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 16px 32px;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .results-header h2 {
+            font-size: 16px;
+            color: var(--text);
+        }
+        .results-count {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* Flight Card */
+        .flight-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .flight-card:active { transform: scale(0.99); }
+        .flight-main {
+            padding: 16px;
+        }
+        .flight-airline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .airline-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .airline-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .flight-number {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        .flight-route {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .route-point {
+            text-align: center;
+            min-width: 70px;
+        }
+        .route-time {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .route-code {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .route-line {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .route-duration {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        .route-bar {
+            width: 100%;
+            height: 2px;
+            background: var(--border);
+            position: relative;
+        }
+        .route-bar::after {
+            content: '✈';
+            position: absolute;
+            right: -4px;
+            top: -9px;
+            font-size: 14px;
+            color: var(--primary);
+        }
+        .route-stops {
+            font-size: 11px;
+            color: var(--success);
+        }
+
+        /* Price Compare */
+        .price-compare {
+            border-top: 1px solid var(--border);
+            background: #fafbfc;
+        }
+        .price-toggle {
+            width: 100%;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text);
+        }
+        .price-toggle .lowest {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .price-toggle .toggle-hint {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        .price-list {
+            display: none;
+            padding: 0 16px 12px;
+        }
+        .price-list.active { display: block; }
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .price-item:last-child { border-bottom: none; }
+        .price-platform {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .platform-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+        .platform-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .price-value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .price-value.lowest-price {
+            color: var(--accent);
+        }
+        .price-book {
+            font-size: 12px;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px 16px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Empty / Error */
+        .empty-state {
+            text-align: center;
+            padding: 48px 16px;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: var(--border);
+        }
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header h1 { font-size: 20px; }
+            .route-time { font-size: 18px; }
+            .price-toggle .lowest { font-size: 16px; }
+        }
+
+        /* Data source badge */
+        .data-source {
+            max-width: 600px;
+            margin: 0 auto 12px;
+            padding: 0 16px;
+        }
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-light);
+            background: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .source-badge i { color: var(--success); font-size: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1><i class="fas fa-plane"></i> 机票比价</h1>
+    <p>实时航班查询 · 多平台价格对比</p>
+</div>
+
+<div class="search-panel">
+    <div class="search-card">
+        <div class="swap-row">
+            <div class="input-group">
+                <label>出发地</label>
+                <input type="text" id="fromInput" placeholder="城市或机场代码" autocomplete="off">
+                <div class="suggestions" id="fromSuggestions"></div>
+            </div>
+            <button class="swap-btn" id="swapBtn" title="交换出发/到达"><i class="fas fa-exchange-alt"></i></button>
+            <div class="input-group">
+                <label>目的地</label>
+                <input type="text" id="toInput" placeholder="城市或机场代码" autocomplete="off">
+                <div class="suggestions" id="toSuggestions"></div>
+            </div>
+        </div>
+        <div class="date-row">
+            <label style="display:block;font-size:12px;color:var(--text-light);margin-bottom:4px;font-weight:500;">出发日期</label>
+            <input type="date" id="dateInput">
+        </div>
+        <button class="search-btn" id="searchBtn">
+            <i class="fas fa-search"></i> 搜索航班
+        </button>
+    </div>
+</div>
+
+<div id="dataInfo" class="data-source" style="display:none;">
+    <span class="source-badge">
+        <i class="fas fa-circle"></i> 航班数据: Aviationstack · 价格为比价演示
+    </span>
+</div>
+
+<div class="results" id="results">
+    <div class="empty-state">
+        <i class="fas fa-plane-departure"></i>
+        <p>输入出发地和目的地，搜索航班</p>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG =====
+const API_KEY = '9d3121e8e5affcebfd88f6b802a74b0a';
+const API_BASE = 'https://api.aviationstack.com/v1';
+
+// ===== PLATFORMS for price mock =====
+const PLATFORMS = [
+    { name: '携程', color: '#0070ba', icon: '携' },
+    { name: '去哪儿', color: '#ff6d00', icon: '去' },
+    { name: '飞猪', color: '#ff4081', icon: '猪' },
+    { name: '同程', color: '#e91e63', icon: '同' },
+    { name: '美团', color: '#ffc107', icon: '美' },
+];
+
+// ===== POPULAR AIRPORTS (Chinese + International) =====
+const POPULAR_AIRPORTS = [
+    { iata: 'PEK', name: '北京首都国际机场', city: '北京', country: '中国' },
+    { iata: 'PKX', name: '北京大兴国际机场', city: '北京', country: '中国' },
+    { iata: 'SHA', name: '上海虹桥国际机场', city: '上海', country: '中国' },
+    { iata: 'PVG', name: '上海浦东国际机场', city: '上海', country: '中国' },
+    { iata: 'CAN', name: '广州白云国际机场', city: '广州', country: '中国' },
+    { iata: 'SZX', name: '深圳宝安国际机场', city: '深圳', country: '中国' },
+    { iata: 'CTU', name: '成都天府国际机场', city: '成都', country: '中国' },
+    { iata: 'CKG', name: '重庆江北国际机场', city: '重庆', country: '中国' },
+    { iata: 'HGH', name: '杭州萧山国际机场', city: '杭州', country: '中国' },
+    { iata: 'NKG', name: '南京禄口国际机场', city: '南京', country: '中国' },
+    { iata: 'WUH', name: '武汉天河国际机场', city: '武汉', country: '中国' },
+    { iata: 'KMG', name: '昆明长水国际机场', city: '昆明', country: '中国' },
+    { iata: 'XIY', name: '西安咸阳国际机场', city: '西安', country: '中国' },
+    { iata: 'TAO', name: '青岛胶东国际机场', city: '青岛', country: '中国' },
+    { iata: 'DLC', name: '大连周水子国际机场', city: '大连', country: '中国' },
+    { iata: 'SHE', name: '沈阳桃仙国际机场', city: '沈阳', country: '中国' },
+    { iata: 'TSN', name: '天津滨海国际机场', city: '天津', country: '中国' },
+    { iata: 'HAK', name: '海口美兰国际机场', city: '海口', country: '中国' },
+    { iata: 'SYX', name: '三亚凤凰国际机场', city: '三亚', country: '中国' },
+    { iata: 'XMN', name: '厦门高崎国际机场', city: '厦门', country: '中国' },
+    { iata: 'NRT', name: '东京成田国际机场', city: '东京', country: '日本' },
+    { iata: 'HND', name: '东京羽田国际机场', city: '东京', country: '日本' },
+    { iata: 'KIX', name: '大阪关西国际机场', city: '大阪', country: '日本' },
+    { iata: 'ICN', name: '首尔仁川国际机场', city: '首尔', country: '韩国' },
+    { iata: 'SIN', name: '新加坡樟宜机场', city: '新加坡', country: '新加坡' },
+    { iata: 'BKK', name: '曼谷素万那普机场', city: '曼谷', country: '泰国' },
+    { iata: 'HKG', name: '香港国际机场', city: '香港', country: '中国' },
+    { iata: 'TPE', name: '台北桃园国际机场', city: '台北', country: '中国' },
+    { iata: 'LHR', name: '伦敦希思罗机场', city: '伦敦', country: '英国' },
+    { iata: 'CDG', name: '巴黎戴高乐机场', city: '巴黎', country: '法国' },
+    { iata: 'JFK', name: '纽约肯尼迪机场', city: '纽约', country: '美国' },
+    { iata: 'LAX', name: '洛杉矶国际机场', city: '洛杉矶', country: '美国' },
+];
+
+// ===== DOM =====
+const fromInput = document.getElementById('fromInput');
+const toInput = document.getElementById('toInput');
+const dateInput = document.getElementById('dateInput');
+const searchBtn = document.getElementById('searchBtn');
+const swapBtn = document.getElementById('swapBtn');
+const resultsDiv = document.getElementById('results');
+const fromSuggestions = document.getElementById('fromSuggestions');
+const toSuggestions = document.getElementById('toSuggestions');
+const toast = document.getElementById('toast');
+const dataInfo = document.getElementById('dataInfo');
+
+// Default date: tomorrow
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+dateInput.value = tomorrow.toISOString().split('T')[0];
+
+// ===== AIRPORT SEARCH =====
+function searchAirports(query) {
+    if (!query || query.length < 1) return [];
+    const q = query.toUpperCase();
+    return POPULAR_AIRPORTS.filter(a =>
+        a.iata.includes(q) ||
+        a.city.includes(query) ||
+        a.name.includes(query) ||
+        a.country.includes(query)
+    ).slice(0, 6);
+}
+
+function showSuggestions(input, container, targetInput) {
+    const results = searchAirports(input.value);
+    if (results.length === 0) {
+        container.classList.remove('active');
+        return;
+    }
+    container.innerHTML = results.map(a => `
+        <div class="suggestion-item" data-iata="${a.iata}" data-city="${a.city}">
+            <span class="code">${a.iata}</span> ${a.city}
+            <div class="city">${a.name}</div>
+        </div>
+    `).join('');
+    container.classList.add('active');
+
+    container.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+            targetInput.value = item.dataset.iata;
+            container.classList.remove('active');
+        });
+    });
+}
+
+fromInput.addEventListener('input', () => showSuggestions(fromInput, fromSuggestions, fromInput));
+toInput.addEventListener('input', () => showSuggestions(toInput, toSuggestions, toInput));
+fromInput.addEventListener('focus', () => showSuggestions(fromInput, fromSuggestions, fromInput));
+toInput.addEventListener('focus', () => showSuggestions(toInput, toSuggestions, toInput));
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.input-group')) {
+        fromSuggestions.classList.remove('active');
+        toSuggestions.classList.remove('active');
+    }
+});
+
+// Swap
+swapBtn.addEventListener('click', () => {
+    const tmp = fromInput.value;
+    fromInput.value = toInput.value;
+    toInput.value = tmp;
+});
+
+// ===== MOCK PRICE GENERATOR =====
+function generateMockPrices(flightNum) {
+    // Use flight number as seed for consistent prices per flight
+    const seed = flightNum ? flightNum.split('').reduce((a, c) => a + c.charCodeAt(0), 0) : Math.random() * 1000;
+    const basePrice = 400 + (seed % 1200);
+    const platformCount = 3 + (seed % 3); // 3-5 platforms per flight
+    const usedPlatforms = [...PLATFORMS].sort(() => 0.5 - Math.random()).slice(0, platformCount);
+
+    return usedPlatforms.map((p, i) => {
+        const variation = (Math.sin(seed * (i + 1)) * 0.15 + 1);
+        const price = Math.round(basePrice * variation / 10) * 10;
+        return { platform: p.name, color: p.color, icon: p.icon, price };
+    }).sort((a, b) => a.price - b.price);
+}
+
+// ===== MOCK FLIGHTS (fallback when API limits hit) =====
+function generateMockFlights(from, to, date) {
+    const airlines = [
+        { name: '中国国航', code: 'CA' },
+        { name: '东方航空', code: 'MU' },
+        { name: '南方航空', code: 'CZ' },
+        { name: '海南航空', code: 'HU' },
+        { name: '春秋航空', code: '9C' },
+        { name: '厦门航空', code: 'MF' },
+    ];
+    const flights = [];
+    const count = 4 + Math.floor(Math.random() * 4);
+
+    for (let i = 0; i < count; i++) {
+        const airline = airlines[i % airlines.length];
+        const departHour = 6 + Math.floor(Math.random() * 14);
+        const departMin = Math.floor(Math.random() * 6) * 10;
+        const durationMin = 120 + Math.floor(Math.random() * 180);
+        const arriveTime = new Date(`${date}T${String(departHour).padStart(2,'0')}:${String(departMin).padStart(2,'0')}:00`);
+        arriveTime.setMinutes(arriveTime.getMinutes() + durationMin);
+
+        const flightNum = `${airline.code}${1000 + Math.floor(Math.random() * 8000)}`;
+        const stops = Math.random() > 0.7 ? 1 : 0;
+        const durH = Math.floor(durationMin / 60);
+        const durM = durationMin % 60;
+
+        flights.push({
+            airline: { name: airline.name, iata: airline.code },
+            flight: { iata: flightNum, number: flightNum.slice(2) },
+            departure: {
+                airport: from,
+                iata: from,
+                scheduled: `${date}T${String(departHour).padStart(2,'0')}:${String(departMin).padStart(2,'0')}:00`,
+            },
+            arrival: {
+                airport: to,
+                iata: to,
+                scheduled: arriveTime.toISOString(),
+            },
+            duration: `${durH}h ${durM}m`,
+            stops: stops,
+            flight_status: 'scheduled',
+        });
+    }
+
+    return flights.sort((a, b) => a.departure.scheduled.localeCompare(b.departure.scheduled));
+}
+
+// ===== API SEARCH =====
+async function searchFlights(from, to, date) {
+    // Try Aviationstack API first
+    try {
+        const url = `${API_BASE}/flights?access_key=${API_KEY}&dep_iata=${from}&arr_iata=${to}&flight_date=${date}&limit=10`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (data.data && data.data.length > 0) {
+            return { flights: data.data, source: 'api' };
+        }
+    } catch (e) {
+        console.warn('API call failed, using mock data:', e);
+    }
+
+    // Fallback to mock data
+    const mockFlights = generateMockFlights(from, to, date);
+    return { flights: mockFlights, source: 'mock' };
+}
+
+// ===== RENDER =====
+function formatTime(isoStr) {
+    if (!isoStr) return '--:--';
+    const d = new Date(isoStr);
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function renderFlights(result) {
+    const { flights, source } = result;
+
+    if (!flights || flights.length === 0) {
+        resultsDiv.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>未找到航班，请尝试其他日期或航线</p>
+            </div>`;
+        return;
+    }
+
+    dataInfo.style.display = 'block';
+
+    let html = `
+        <div class="results-header">
+            <h2>搜索结果</h2>
+            <span class="results-count">${flights.length} 个航班${source === 'mock' ? ' (示例数据)' : ''}</span>
+        </div>`;
+
+    flights.forEach((f, idx) => {
+        const flightNum = f.flight?.iata || f.flight?.number || `--`;
+        const airlineName = f.airline?.name || '未知航司';
+        const airlineCode = f.airline?.iata || '??';
+        const depTime = formatTime(f.departure?.scheduled);
+        const arrTime = formatTime(f.arrival?.scheduled);
+        const depCode = f.departure?.iata || fromInput.value.toUpperCase();
+        const arrCode = f.arrival?.iata || toInput.value.toUpperCase();
+        const duration = f.duration || calcDuration(f.departure?.scheduled, f.arrival?.scheduled);
+        const stops = f.stops || 0;
+
+        const prices = generateMockPrices(flightNum);
+        const lowestPrice = prices[0]?.price || 0;
+
+        html += `
+        <div class="flight-card">
+            <div class="flight-main">
+                <div class="flight-airline">
+                    <div class="airline-logo">${airlineCode.slice(0,2)}</div>
+                    <div>
+                        <div class="airline-name">${airlineName}</div>
+                        <div class="flight-number">${flightNum}</div>
+                    </div>
+                </div>
+                <div class="flight-route">
+                    <div class="route-point">
+                        <div class="route-time">${depTime}</div>
+                        <div class="route-code">${depCode}</div>
+                    </div>
+                    <div class="route-line">
+                        <div class="route-duration">${duration}</div>
+                        <div class="route-bar"></div>
+                        <div class="route-stops">${stops === 0 ? '直飞' : stops + '次中转'}</div>
+                    </div>
+                    <div class="route-point">
+                        <div class="route-time">${arrTime}</div>
+                        <div class="route-code">${arrCode}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="price-compare">
+                <button class="price-toggle" onclick="togglePrice(this)">
+                    <span>
+                        最低 <span class="lowest">¥${lowestPrice}</span>
+                        <span style="font-size:12px;color:var(--text-light);margin-left:4px;">${prices[0]?.platform || ''}</span>
+                    </span>
+                    <span class="toggle-hint">查看 ${prices.length} 个平台报价 <i class="fas fa-chevron-down"></i></span>
+                </button>
+                <div class="price-list">
+                    ${prices.map((p, pi) => `
+                        <div class="price-item">
+                            <div class="price-platform">
+                                <div class="platform-icon" style="background:${p.color}">${p.icon}</div>
+                                <span class="platform-name">${p.platform}</span>
+                            </div>
+                            <div>
+                                <span class="price-value ${pi === 0 ? 'lowest-price' : ''}">¥${p.price}</span>
+                                <span class="price-book">去预订 →</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>`;
+    });
+
+    resultsDiv.innerHTML = html;
+}
+
+function calcDuration(dep, arr) {
+    if (!dep || !arr) return '--h --m';
+    const diff = new Date(arr) - new Date(dep);
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    return `${h}h ${m}m`;
+}
+
+function togglePrice(btn) {
+    const list = btn.nextElementSibling;
+    list.classList.toggle('active');
+    const icon = btn.querySelector('.fa-chevron-down, .fa-chevron-up');
+    if (list.classList.contains('active')) {
+        icon?.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    } else {
+        icon?.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    }
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ===== SEARCH HANDLER =====
+searchBtn.addEventListener('click', async () => {
+    const from = fromInput.value.trim().toUpperCase();
+    const to = toInput.value.trim().toUpperCase();
+    const date = dateInput.value;
+
+    if (!from || !to) {
+        showToast('请输入出发地和目的地');
+        return;
+    }
+    if (!date) {
+        showToast('请选择出发日期');
+        return;
+    }
+
+    searchBtn.disabled = true;
+    searchBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0;"></div> 搜索中...';
+
+    resultsDiv.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>正在搜索 ${from} → ${to} 的航班...</p>
+        </div>`;
+
+    try {
+        const result = await searchFlights(from, to, date);
+        renderFlights(result);
+    } catch (e) {
+        resultsDiv.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>搜索出错: ${e.message}</p>
+            </div>`;
+    }
+
+    searchBtn.disabled = false;
+    searchBtn.innerHTML = '<i class="fas fa-search"></i> 搜索航班';
+});
+</script>
+
+</body>
+</html>
